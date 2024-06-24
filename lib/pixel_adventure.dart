@@ -13,7 +13,7 @@ class PixelAdventure extends FlameGame
   @override
   Color backgroundColor() => const Color(0xFF211F30);
   late final CameraComponent cam;
-  Player player = Player();
+  Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
   bool showJoystick = false;
 
@@ -28,7 +28,7 @@ class PixelAdventure extends FlameGame
     cam.priority = 1;
 
     addAll([level, cam]);
-    if(showJoystick) {
+    if (showJoystick) {
       addJoyStick();
     }
 
@@ -37,7 +37,7 @@ class PixelAdventure extends FlameGame
 
   @override
   void update(double dt) {
-    if(showJoystick) {
+    if (showJoystick) {
       updateJoystick();
     }
     super.update(dt);
@@ -45,20 +45,16 @@ class PixelAdventure extends FlameGame
 
   void addJoyStick() {
     joystick = JoystickComponent(
-      priority: 2,
-      knob: SpriteComponent(
-        sprite: Sprite(images.fromCache('HUD/Knob.png'))
-      ),
-      background: SpriteComponent(
-        sprite: Sprite(images.fromCache('HUD/Joystick.png'))
-      ),
-      margin: const EdgeInsets.only(left: 32, bottom: 32)
-    );
+        priority: 2,
+        knob: SpriteComponent(sprite: Sprite(images.fromCache('HUD/Knob.png'))),
+        background: SpriteComponent(
+            sprite: Sprite(images.fromCache('HUD/Joystick.png'))),
+        margin: const EdgeInsets.only(left: 32, bottom: 32));
     add(joystick);
   }
 
   void updateJoystick() {
-    switch(joystick.direction){
+    switch (joystick.direction) {
       case JoystickDirection.downLeft:
       case JoystickDirection.upLeft:
       case JoystickDirection.left:
