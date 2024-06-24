@@ -4,25 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
-enum PlayerState {
-  idle,
-  running
-}
+enum PlayerState { idle, running }
 
-enum PlayerDirection {
-  left,
-  right,
-  none
-}
+enum PlayerDirection { left, right, none }
 
 class Player extends SpriteAnimationGroupComponent
     with HasGameRef<PixelAdventure>, KeyboardHandler {
-
   String character;
-  Player({
-    super.position,
-    required this.character
-  });
+  Player({super.position, this.character = 'Ninja Frog'});
 
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
@@ -47,16 +36,16 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA)
-      || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD)
-        || keysPressed.contains(LogicalKeyboardKey.arrowRight);
+    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
-    if(isLeftKeyPressed && isRightKeyPressed){
+    if (isLeftKeyPressed && isRightKeyPressed) {
       playerDirection = PlayerDirection.none;
-    } else if(isLeftKeyPressed){
+    } else if (isLeftKeyPressed) {
       playerDirection = PlayerDirection.left;
-    } else if(isRightKeyPressed){
+    } else if (isRightKeyPressed) {
       playerDirection = PlayerDirection.right;
     } else {
       playerDirection = PlayerDirection.none;
@@ -77,22 +66,18 @@ class Player extends SpriteAnimationGroupComponent
     current = PlayerState.idle;
   }
 
-  SpriteAnimation _spriteAnimation(String state, int amount){
+  SpriteAnimation _spriteAnimation(String state, int amount) {
     return SpriteAnimation.fromFrameData(
         game.images.fromCache('Main Characters/$character/$state (32x32).png'),
         SpriteAnimationData.sequenced(
-            amount: amount,
-            stepTime: stepTime,
-            textureSize: Vector2.all(32)
-        )
-    );
+            amount: amount, stepTime: stepTime, textureSize: Vector2.all(32)));
   }
 
   void _updatePlayerMovement(double dt) {
     double dirX = 0.0;
-    switch(playerDirection){
+    switch (playerDirection) {
       case PlayerDirection.left:
-        if(isFacingRight) {
+        if (isFacingRight) {
           flipHorizontallyAroundCenter();
           isFacingRight = false;
         }
@@ -100,7 +85,7 @@ class Player extends SpriteAnimationGroupComponent
         dirX -= moveSpeed;
         break;
       case PlayerDirection.right:
-        if(!isFacingRight) {
+        if (!isFacingRight) {
           flipHorizontallyAroundCenter();
           isFacingRight = true;
         }
