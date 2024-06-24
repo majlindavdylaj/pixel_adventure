@@ -6,7 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pixel_adventure/components/player.dart';
-import 'package:pixel_adventure/levels/level.dart';
+import 'package:pixel_adventure/components/level.dart';
 
 class PixelAdventure extends FlameGame
     with HasKeyboardHandlerComponents, DragCallbacks {
@@ -15,7 +15,7 @@ class PixelAdventure extends FlameGame
   late final CameraComponent cam;
   Player player = Player();
   late JoystickComponent joystick;
-  bool showJoystick = true;
+  bool showJoystick = false;
 
   @override
   FutureOr<void> onLoad() async {
@@ -62,15 +62,15 @@ class PixelAdventure extends FlameGame
       case JoystickDirection.downLeft:
       case JoystickDirection.upLeft:
       case JoystickDirection.left:
-        player.playerDirection = PlayerDirection.left;
+        player.horizontalMovement = -1;
         break;
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
       case JoystickDirection.right:
-        player.playerDirection = PlayerDirection.right;
+        player.horizontalMovement = 1;
         break;
       default:
-        player.playerDirection = PlayerDirection.none;
+        player.horizontalMovement = 0;
         break;
     }
   }
