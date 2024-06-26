@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/services.dart';
+import 'package:pixel_adventure/components/check_point.dart';
 import 'package:pixel_adventure/components/custom_hitbox.dart';
 import 'package:pixel_adventure/components/fruit.dart';
 import 'package:pixel_adventure/components/saw.dart';
@@ -12,7 +13,7 @@ import 'package:pixel_adventure/utils.dart';
 
 import 'collision_block.dart';
 
-enum PlayerState { idle, running, jumping, falling, hit, appearing }
+enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing }
 
 class Player extends SpriteAnimationGroupComponent
     with HasGameRef<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
@@ -26,6 +27,7 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation fallingAnimation;
   late final SpriteAnimation hitAnimation;
   late final SpriteAnimation appearingAnimation;
+  late final SpriteAnimation disappearingAnimation;
 
   final double _gravity = 28;
   final double _jumpForce = 460;
@@ -37,6 +39,7 @@ class Player extends SpriteAnimationGroupComponent
   bool isOnGround = false;
   bool hasJumped = false;
   bool gotHit = false;
+  bool reachedCheckPoint = false;
   List<CollisionBlock> collisionBlocks = [];
   CustomHitBox hitBox =
       CustomHitBox(offsetX: 8, offsetY: 4, width: 14, height: 28);
@@ -56,7 +59,7 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void update(double dt) {
-    if(!gotHit){
+    if(!gotHit && !reachedCheckPoint){
       _updatePlayerState();
       _updatePlayerMovement(dt);
       _checkHorizontalCollisions();
@@ -85,8 +88,11 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Fruit) other.collidedWithPlayer();
-    if (other is Saw) _respawn();
+    if(!reachedCheckPoint){
+      if (other is Fruit) other.collidedWithPlayer();
+      if (other is Saw) _respawn();
+      if (other is CheckPoint) _reachedCheckPoint();
+    }
 
     super.onCollision(intersectionPoints, other);
   }
@@ -98,6 +104,7 @@ class Player extends SpriteAnimationGroupComponent
     fallingAnimation = _spriteAnimation('Fall', 1);
     hitAnimation = _spriteAnimation('Hit', 7)..loop = false;
     appearingAnimation = _specialSpriteAnimation('Appearing', 7)..loop = false;
+    disappearingAnimation = _specialSpriteAnimation('Desappearing', 7)..loop = false;
 
     animations = {
       PlayerState.idle: idleAnimation,
@@ -105,7 +112,8 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.jumping: jumpingAnimation,
       PlayerState.falling: fallingAnimation,
       PlayerState.hit: hitAnimation,
-      PlayerState.appearing: appearingAnimation
+      PlayerState.appearing: appearingAnimation,
+      PlayerState.disappearing: disappearingAnimation
     };
 
     current = PlayerState.idle;
@@ -219,6 +227,24 @@ class Player extends SpriteAnimationGroupComponent
         position = startingPosition;
         _updatePlayerState();
         Future.delayed(canMoveDuration, () => gotHit = false);
+      });
+    });
+  }
+
+  void _reachedCheckPoint() {
+    reachedCheckPoint = true;
+    if(scale.x > 0) {
+      position = position - Vector2.all(32);
+    } else if(scale.x < 0) {
+      position = position + Vector2(32, -32);
+    }
+
+    current = PlayerState.disappearing;
+    animationTickers![PlayerState.disappearing]!.completed.whenComplete(() {
+      reachedCheckPoint = false;
+      position = Vector2.all(-640);
+      Future.delayed(const Duration(seconds: 2),() {
+        game.loadNextLevel();
       });
     });
   }

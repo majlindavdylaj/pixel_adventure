@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -13,22 +12,17 @@ class PixelAdventure extends FlameGame
     with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
-  late final CameraComponent cam;
+  late CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
   bool showJoystick = false;
+  List<String> levelNames = ['level-01', 'level-02'];
+  int currentLevelIndex = 0;
 
   @override
   FutureOr<void> onLoad() async {
     await images.loadAllImages();
-    final level = Level(levelName: 'Level-01', player: player);
-
-    cam = CameraComponent.withFixedResolution(
-        world: level, width: 640, height: 360);
-    cam.viewfinder.anchor = Anchor.topLeft;
-    cam.priority = 1;
-
-    addAll([level, cam]);
+    _loadLevel();
     if (showJoystick) {
       addJoyStick();
     }
@@ -70,5 +64,28 @@ class PixelAdventure extends FlameGame
         player.horizontalMovement = 0;
         break;
     }
+  }
+
+  void loadNextLevel() {
+    removeWhere((component) => component is Level);
+    if(currentLevelIndex < levelNames.length - 1){
+      currentLevelIndex++;
+      Future.delayed(const Duration(seconds: 1), (){
+        _loadLevel();
+      });
+    } else {
+      //No more levels
+    }
+  }
+
+  void _loadLevel() {
+    Level level = Level(levelName: levelNames[currentLevelIndex], player: player);
+
+    cam = CameraComponent.withFixedResolution(
+        world: level, width: 640, height: 360);
+    cam.viewfinder.anchor = Anchor.topLeft;
+    cam.priority = 1;
+
+    addAll([level, cam]);
   }
 }
