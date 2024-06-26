@@ -70,7 +70,7 @@ class PixelAdventure extends FlameGame
     removeWhere((component) => component is Level);
     if(currentLevelIndex < levelNames.length - 1){
       currentLevelIndex++;
-      Future.delayed(Duration.zero, (){
+      Future.delayed(const Duration(seconds: 1), (){
         _loadLevel();
       });
     } else {
