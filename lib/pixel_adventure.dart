@@ -47,7 +47,7 @@ class PixelAdventure extends FlameGame
     if (showControls) {
       updateJoystick();
     }
-    if(!areFruitsCollected && fruits != -1){
+    if (!areFruitsCollected && fruits != -1) {
       areFruitsCollected = collectedFruits >= fruits;
     }
     super.update(dt);

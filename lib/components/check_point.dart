@@ -27,7 +27,7 @@ class CheckPoint extends SpriteAnimationComponent
 
   @override
   void update(double dt) {
-    if(game.areFruitsCollected && !flagShowing){
+    if (game.areFruitsCollected && !flagShowing) {
       _reachedCheckPoint();
       flagShowing = true;
     }

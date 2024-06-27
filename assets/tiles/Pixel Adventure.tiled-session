@@ -25,7 +25,7 @@
                 2
             ],
             "scale": 1.5,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 306.3333333333333,
                 "y": 183.33333333333334
@@ -41,7 +41,7 @@
     "openFiles": [
     ],
     "project": "Pixel Adventure.tiled-project",
-    "property.type": "string",
+    "property.type": "float",
     "recentFiles": [
         "Level-01.tmx"
     ],
