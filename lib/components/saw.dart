@@ -29,7 +29,7 @@ class Saw extends SpriteAnimationComponent with HasGameRef<PixelAdventure> {
     priority = -1;
     add(CircleHitbox());
 
-    if(isVertical){
+    if (isVertical) {
       rangeNeg = position.y - offsetNeg * tileSize;
       rangePos = position.y + offsetPos * tileSize;
     } else {
@@ -46,7 +46,7 @@ class Saw extends SpriteAnimationComponent with HasGameRef<PixelAdventure> {
 
   @override
   void update(double dt) {
-    if(isVertical){
+    if (isVertical) {
       _moveVertically(dt);
     } else {
       _moveHorizontally(dt);
@@ -55,18 +55,18 @@ class Saw extends SpriteAnimationComponent with HasGameRef<PixelAdventure> {
   }
 
   void _moveVertically(double dt) {
-    if(position.y >= rangePos){
+    if (position.y >= rangePos) {
       moveDirection = -1;
-    } else if(position.y <= rangeNeg){
+    } else if (position.y <= rangeNeg) {
       moveDirection = 1;
     }
     position.y += moveDirection * moveSpeed * dt;
   }
 
   void _moveHorizontally(double dt) {
-    if(position.x >= rangePos){
+    if (position.x >= rangePos) {
       moveDirection = -1;
-    } else if(position.x <= rangeNeg){
+    } else if (position.x <= rangeNeg) {
       moveDirection = 1;
     }
     position.x += moveDirection * moveSpeed * dt;

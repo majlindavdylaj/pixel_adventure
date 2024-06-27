@@ -33,35 +33,29 @@ class Level extends World with HasGameRef<PixelAdventure> {
 
   void _scrollingBackground() {
     final backgroundLayer = level.tileMap.getLayer('Background');
-    const tileSize = 64;
-    final numTilesY = (game.size.y / tileSize).floor();
-    final numTilesX = (game.size.x / tileSize).floor();
 
     if (backgroundLayer != null) {
       final backgroundColor =
           backgroundLayer.properties.getValue('backgroundColor');
-
-      for (double y = 0; y < game.size.y / numTilesY; y++) {
-        for (double x = 0; x < numTilesX; x++) {
-          final backgroundTile = BackgroundTile(
-              color: backgroundColor,
-              position: Vector2(x * tileSize, y * tileSize - tileSize));
-          add(backgroundTile);
-        }
-      }
+      final backgroundTile =
+          BackgroundTile(color: backgroundColor, position: Vector2(0, 0));
+      add(backgroundTile);
     }
   }
 
   void _spawningObjects() {
     final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('SpawnPoints');
     if (spawnPointsLayer != null) {
+      game.fruits = 0;
       for (final spawnPoint in spawnPointsLayer.objects) {
         switch (spawnPoint.class_) {
           case 'Player':
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
+            player.scale.x = 1;
             add(player);
             break;
           case 'Fruit':
+            game.fruits++;
             final fruit = Fruit(
                 fruit: spawnPoint.name,
                 position: Vector2(spawnPoint.x, spawnPoint.y),
@@ -73,18 +67,17 @@ class Level extends World with HasGameRef<PixelAdventure> {
             final offsetNeg = spawnPoint.properties.getValue('offsetNeg');
             final offsetPos = spawnPoint.properties.getValue('offsetPos');
             final saw = Saw(
-              isVertical: isVertical,
-              offsetNeg: offsetNeg,
-              offsetPos: offsetPos,
-              position: Vector2(spawnPoint.x, spawnPoint.y),
-              size: Vector2(spawnPoint.width, spawnPoint.height));
+                isVertical: isVertical,
+                offsetNeg: offsetNeg,
+                offsetPos: offsetPos,
+                position: Vector2(spawnPoint.x, spawnPoint.y),
+                size: Vector2(spawnPoint.width, spawnPoint.height));
             add(saw);
             break;
           case 'CheckPoint':
             final checkPoint = CheckPoint(
                 position: Vector2(spawnPoint.x, spawnPoint.y),
-                size: Vector2(spawnPoint.width, spawnPoint.height)
-            );
+                size: Vector2(spawnPoint.width, spawnPoint.height));
             add(checkPoint);
             break;
           default:
